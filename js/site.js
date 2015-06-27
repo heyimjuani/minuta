@@ -246,7 +246,7 @@ $(document).ready(function() {
       data: localStorage.currentTasks
     });
 
-    var serverUrl = "https://intense-anchorage-5243.herokuapp.com/share";
+    var serverUrl = "https://minuta.herokuapp.com/share";
 
     $.post( serverUrl, {
       email: emails,
