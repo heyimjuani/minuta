@@ -233,6 +233,19 @@ $(document).ready(function() {
 
     var emails = prompt("mail shit to: ");
 
+    $.ajax({
+      type: "POST",
+      email: emails,
+      data: localStorage.currentTasks
+    });
+
+    var serverUrl = "https://intense-anchorage-5243.herokuapp.com/share";
+    
+    $.post( serverUrl, {
+      email: emails,
+      data: localStorage.currentTasks
+    }, "json");
+
     console.log(emails);
     // var fetchTasks = JSON.parse(localStorage.currentParsed);
     // var previousTask = "<tr data-task='" + "task" + taskFriendly + "'><td><strong>" + previousList.tasks[i].type.toUpperCase() + "</strong></td><td>" + previousList.tasks[i].text + "</td></tr>";
