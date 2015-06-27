@@ -220,6 +220,13 @@ $(document).ready(function() {
     }
   });
 
+  $("#reset").on("click", function(){
+    for (var key in localStorage){
+      localStorage.removeItem(key);
+    }
+    location.reload();
+  });
+
   $("nav").on("click", "#exportCsv", function(){
     $("#past table").empty();
     var currentParsed = JSON.parse(localStorage.currentTasks);
@@ -240,10 +247,10 @@ $(document).ready(function() {
     });
 
     var serverUrl = "https://intense-anchorage-5243.herokuapp.com/share";
-    
+
     $.post( serverUrl, {
       email: emails,
-      data: localStorage.currentTasks
+      taskData: localStorage.currentTasks
     }, "json");
 
     console.log(emails);
