@@ -119,8 +119,10 @@ header {
     opacity: 1;
     text-decoration: underline; }
 
-body.newUser #sidebar, body.newUser #tasks {
-  display: none; }
+body.newUser {
+  padding: 0; }
+  body.newUser #sidebar, body.newUser #tasks {
+    display: none; }
 
 body.existingUser #blankState {
   display: none; }
