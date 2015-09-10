@@ -1,18 +1,21 @@
 $(document).ready(function() {
-	var task, totalTasks, taskHTML, session, totalSessions, currentSession, currentTasks, toExport, sessionToLoad;
+	var task, totalTasks, taskHTML, session, totalSessions, currentSession, currentTasks, toExport, sessionToLoad, date;
 
   var dropdown = $("#newEntry .fields").html();
+  var tempTotal = 0;
 
   if (typeof (Storage) !== undefined) {
     for (var key in localStorage){
       if (key.indexOf("session") === 0) {
-        var loadButton = "<button class='load' data-load='" + key + "'>" + JSON.parse(localStorage.getItem(key)).name + "</button>";
-        $("nav").append(loadButton);
+        var loadButton = "<a href='' class='load' data-load='" + key + "'>" + JSON.parse(localStorage.getItem(key)).name + "<small>" + moment(JSON.parse(localStorage.getItem(key)).date).fromNow() + "</small></a>";
+        $("nav").prepend(loadButton);
       }
       if (key === "total" || key.indexOf("task") === -1) { continue; }
+      if (key.indexOf("task") === 0) { tempTotal++; }
+      localStorage.setItem("total", tempTotal);
       var prevStr = localStorage.getItem(key);
       var prevObj = JSON.parse(prevStr);
-      taskHTML = "<li data-task='" + key + "'><form>" + dropdown + "</form> <i class='taskEdit'>Edit</i> <i class='taskDelete'>Delete</i></li>";
+      taskHTML = "<li data-task='" + key + "'><form>" + dropdown + "</form> <div class='actions'><i class='taskEdit'>Edit</i> <i class='taskDelete'>Delete</i></div></li>";
       $("#done").append(taskHTML);
       $("li[data-task=" + key + "] .entryType").val(prevObj.type);
       $("li[data-task=" + key + "] .entryText").val(prevObj.text);
@@ -20,25 +23,31 @@ $(document).ready(function() {
     }
     // check if the user is new
     if (localStorage.currentSession) {
+      $("body").removeClass("newUser");
+      $("body").addClass("existingUser");
+      var activeSession = JSON.parse(localStorage.currentSession);
+      $(".list-name a").text(activeSession.name);
+      $("nav .load[data-load=" + activeSession.id + "]").addClass("active");
       totalTasks = localStorage.total;
       task = totalTasks;
       totalSessions = localStorage.totalSessions;
       session = totalSessions;
-      console.log("user was here");
+      // console.log("user was here");
     } else {
-      console.log("user is new");
+      // console.log("user is new");
+      $("body").addClass("newUser");
       task = 0;
       totalTasks = 0;
-      session = 1;
+      session = 0;
       localStorage.setItem("total", 0);
-      localStorage.setItem("totalSessions", 1);
-      currentSession = prompt("name this session");
-      var sessionFriendly = ("00" + session).slice(-3);
+      localStorage.setItem("totalSessions", 0);
+      // var sessionFriendly = ("00" + session).slice(-3);
+      /*currentSession = prompt("name this session");
       localStorage.setItem("currentSession", "{\"name\": \"" + currentSession + "\", \"id\": \"session" + sessionFriendly + "\"}");
       var loadButton = "<button class='load' data-load='session" + sessionFriendly + "'>" + currentSession + "</button>";
       $("nav").append(loadButton);
       localStorage.setItem("session" + sessionFriendly, "{ \"name\": \"" + currentSession + "\", \"tasks\": []}");
-      localStorage.setItem("currentTasks", localStorage.getItem("session" + sessionFriendly));
+      localStorage.setItem("currentTasks", localStorage.getItem("session" + sessionFriendly));*/
     }
   }
 
@@ -64,7 +73,7 @@ $(document).ready(function() {
 
     // console.log(dropdown);
 
-    taskHTML = "<li data-task='task" + taskFriendly + "'><form>" + dropdown + "</form><i class='taskEdit'>Edit</i> <i class='taskDelete'>Delete</i></li>";
+    taskHTML = "<li data-task='task" + taskFriendly + "'><form>" + dropdown + "</form><div class='actions'><i class='taskEdit'>Edit</i> <i class='taskDelete'>Delete</i></div></li>";
 
     // console.log($("li[data-task=" + taskFriendly + "]").find(".entryType"));
 
@@ -87,18 +96,24 @@ $(document).ready(function() {
     }
     var oneSession = JSON.parse(localStorage.currentSession);
     var thisSession = oneSession.name;
-    localStorage.setItem("currentTasks", "{ \"name\": \"" + thisSession + "\", \"tasks\": [" + currentTasks + "]}");
+    var date = new Date();
+    localStorage.setItem("currentTasks", "{ \"name\": \"" + thisSession + "\", \"date\": \"" + date.toUTCString() + "\", \"tasks\": [" + currentTasks + "]}");
     var sessionFriendly = ("00" + session).slice(-3);
-    localStorage.setItem(oneSession.id, "{ \"name\": \"" + thisSession + "\", \"tasks\": [" + currentTasks + "]}");
+    localStorage.setItem(oneSession.id, "{ \"name\": \"" + thisSession + "\", \"date\": \"" + date.toUTCString() + "\", \"tasks\": [" + currentTasks + "]}");
+
+    $("#newEntry .entryType").focus();
+    $("#newEntry .entryText").val("");
 
     return false;
   });
 
-  $("#done").on("click", ".taskEdit", function(){
-    var editing = $(this).parent().attr("data-task");
+  $("#done").on("click", ".actions .taskEdit", function(){
+    var editing = $(this).parent().parent().attr("data-task");
     console.log("editing " + editing);
+    $("li[data-task=" + editing + "]").addClass("editing");
     $("li[data-task=" + editing + "] .entryType").removeAttr("disabled");
     $("li[data-task=" + editing + "] .entryText").removeAttr("disabled");
+    $("li[data-task=" + editing + "] .entryText").focus();
   });
 
   $("#done").on("submit", "form", function(){
@@ -124,14 +139,18 @@ $(document).ready(function() {
     var twoSession = JSON.parse(localStorage.currentSession);
     var thiisSession = twoSession.name;
 
-    localStorage.setItem("currentTasks", "{ \"name\": \"" + thiisSession + "\", \"tasks\": [" + currentTasks + "]}");
-    localStorage.setItem(twoSession.id, "{ \"name\": \"" + thiisSession + "\", \"tasks\": [" + currentTasks + "]}");
+    var date = new Date();
 
-    // return false;
+    localStorage.setItem("currentTasks", "{ \"name\": \"" + thiisSession + "\", \"date\": \"" + date.toUTCString() + "\", \"tasks\": [" + currentTasks + "]}");
+    localStorage.setItem(twoSession.id, "{ \"name\": \"" + thiisSession + "\", \"date\": \"" + date.toUTCString() + "\", \"tasks\": [" + currentTasks + "]}");
+
+    $("li[data-task=" + submitting + "]").removeClass("editing");
+
+    return false;
   });
 
   $("#done").on("click", ".taskDelete", function(){
-    var deleting = $(this).parent().attr("data-task");
+    var deleting = $(this).parent().parent().attr("data-task");
     $("li[data-task=" + deleting + "]").remove();
     localStorage.removeItem(deleting);
 
@@ -162,13 +181,13 @@ $(document).ready(function() {
   });
 
   // save shit on a key
-  $("#new").on("click", function(){
+  $(".newList").on("click", function(e){
     session++;
     var sessionFriendly = ("00" + session).slice(-3);
     // var saveName = prompt("name that shit");
     var saveData = [];
     localStorage.setItem("totalSessions", session);
-    console.log(localStorage.getItem("session" + sessionFriendly));
+    // console.log(localStorage.getItem("session" + sessionFriendly));
     for (var key in localStorage){
       // if (key === "total" || key.indexOf("session") === -1) { continue; }
       if (key.indexOf("task") === 0) { saveData.push(localStorage.getItem(key)); }
@@ -176,26 +195,29 @@ $(document).ready(function() {
       // console.log(key);
     }
     $("#done").empty();
-    currentSession = prompt("name that shit");
+    currentSession = prompt("What project will you be taking notes for?");
 
     localStorage.setItem("currentSession", "{\"name\": \"" + currentSession + "\", \"id\": \"session" + sessionFriendly + "\"}");
-    var loadButton = "<button class='load' data-load='session" + sessionFriendly + "'>" + currentSession + "</button>";
-    $("nav").append(loadButton);
+    var loadButton = "<a href='' class='load new' data-load='session" + sessionFriendly + "'>" + currentSession + "<small>" + moment(JSON.parse(localStorage.getItem(key)).date).fromNow() + "</small></a>";
+    $("nav").prepend(loadButton);
+    $("nav .new").siblings().removeClass("active");
     localStorage.setItem("total", 0);
-    localStorage.setItem("session" + sessionFriendly, "{ \"name\": \"" + currentSession + "\", \"tasks\": []}");
+    date = new Date();
+    localStorage.setItem("session" + sessionFriendly, "{ \"name\": \"" + currentSession + "\", \"date\": \"" + date.toUTCString() + "\", \"tasks\": []}");
     localStorage.removeItem("currentTasks");
+    e.preventDefault;
   });
   
   // change session
-  $("nav").on("click", ".load", function(){
+  $("nav").on("click", ".load", function(e){
     sessionToLoad = $(this).attr("data-load");
     // console.log(sessionToLoad);
 
     var previousList = JSON.parse(localStorage.getItem(sessionToLoad));
-    // console.log(previousList.tasks.length);
-    
+    //console.log(previousList.tasks.length);
     var previousAmount = previousList.tasks.length;
-    console.log(previousAmount);
+    // console.log(previousAmount);
+    localStorage.setItem("total", previousAmount);
 
     for (var key in localStorage){
       if (key.indexOf("task") === 0) { localStorage.removeItem(key); }
@@ -212,12 +234,20 @@ $(document).ready(function() {
 
       var prevStr = localStorage.getItem(key);
       var prevObj = JSON.parse(prevStr);
-      taskHTML = "<li data-task='" + "task" + taskFriendly + "'><form>" + dropdown + "</form> <i class='taskEdit'>Edit</i> <i class='taskDelete'>Delete</i></li>";
+      taskHTML = "<li data-task='" + "task" + taskFriendly + "'><form>" + dropdown + "</form> <div class='actions'><i class='taskEdit'>Edit</i> <i class='taskDelete'>Delete</i></div></li>";
       $("#done").append(taskHTML);
       $("li[data-task=" + "task" + taskFriendly + "] .entryType").val(previousList.tasks[i].type);
       $("li[data-task=" + "task" + taskFriendly + "] .entryText").val(previousList.tasks[i].text);
       $("li[data-task=" + "task" + taskFriendly + "] .entryType, li[data-task=" + "task" + taskFriendly + "] .entryText").attr("disabled", "disabled");
     }
+    var activeSession = JSON.parse(localStorage.currentSession);
+    $(".list-name a").text(activeSession.name);
+    $(this).addClass("active");
+    $(this).siblings().removeClass("active");
+
+    $("#newEntry .entryType").focus();
+
+    e.preventDefault();
   });
 
   $("#reset").on("click", function(){
@@ -227,7 +257,16 @@ $(document).ready(function() {
     location.reload();
   });
 
-  $("nav").on("click", "#exportCsv", function(){
+  $("#export").on("click", function(e){
+    if (localStorage.total === "0") {
+      $(".toast.error").fadeIn();
+      setTimeout(function(){
+        $(".toast.error").fadeOut();
+      }, 3000);
+
+      return false
+    }
+
     $("#past table").empty();
     var currentParsed = JSON.parse(localStorage.currentTasks);
     $("#past table").append("<tr><th>" + currentParsed.name + "</th></td>");
@@ -238,7 +277,7 @@ $(document).ready(function() {
       $("#past table").append(previousTask);
     }
 
-    var emails = prompt("mail shit to: ");
+    var emails = prompt("Email notes to: ");
 
     $.ajax({
       type: "POST",
@@ -254,8 +293,51 @@ $(document).ready(function() {
     }, "json");
 
     console.log(emails);
+
+    $(".toast.success").fadeIn();
+    setTimeout(function(){
+      $(".toast.success").fadeOut();
+    }, 3000);
+
+    e.preventDefault();
     // var fetchTasks = JSON.parse(localStorage.currentParsed);
     // var previousTask = "<tr data-task='" + "task" + taskFriendly + "'><td><strong>" + previousList.tasks[i].type.toUpperCase() + "</strong></td><td>" + previousList.tasks[i].text + "</td></tr>";
     // $("#past table").append(previousTask);
   });
+
+  $("#remove").on("click", function(e){
+    var killSession = JSON.parse(localStorage.currentSession);
+    console.log(killSession.id);
+    e.preventDefault();
+  });
+
+  $(".btn-dropdown").on("click", function(e){
+    var target = $(this).attr("data-target");
+    var el = $("#" + target);
+    
+    el.toggle();
+
+    var offsetLeft = $(this).offset().left;
+    // console.log(offsetLeft);
+    var height = $(this).height();
+    var offsetTop = $(this).offset().top + height - $(window).scrollTop();
+
+    el.css({
+      "top": offsetTop,
+      "left": offsetLeft
+    });
+
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  $(".dropdown a").on("click", function(){
+    $(".dropdown").hide();
+  });
+});
+
+$(document).on("click", function(){
+  if ($(".dropdown").is(":visible")) {
+    $(".dropdown").hide();
+  }
 });

@@ -4,40 +4,72 @@
 	<meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600' rel='stylesheet' type='text/css'>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script type="text/javascript" src="js/moment.min.js"></script>
 	<script type="text/javascript" src="js/site.js"></script>
 	<title>Bones</title>
 </head>
 <body>
+  <section id="blankState">
+    <div>
+      <h1>Minuta</h1>
+      <p>A simple tool to take notes during meetings</p>
+      <a href="" class="btn btn-new newList">Get started</a>
+      <small>Inspired by <a href="http://minutes.io" target="_blank">minutes.io</a></small>
+    </div>
+  </section>
+  <aside id="sidebar">
+    <header>
+      <h1><a href="" class="btn-dropdown" data-target="dropdown-secondary">Minuta</a></h1>
+      <a href="" class="btn align-right btn-text newList" id="new">New</a>
+    </header>
+    <nav></nav>
+  </aside>
 
-  <nav>
-    <button id="reset">Kill</button>
-    <button id="clear">Clear tasks</button>
-    <button id="new">New</button>
-    <button id="exportCsv">Export</button>
-  </nav>
+  <section id="tasks">
+    <header>
+      <h2 class="list-name"><a href="" class="btn-dropdown" data-target="dropdown-primary">Fap app</a></h2>
+      <a href="" class="btn align-right btn-text" id="export">Export</a>
+    </header>
+    <ul id="done"></ul>
 
-  <ul id="done">
-    
-  </ul>
+    <form id="newEntry">
+      <div class="fields">
+        <select name="type" class="entryType" autofocus>
+          <option value="agenda">AGENDA</option>
+          <option value="block">BLOCK</option>
+          <option value="decision">DECISION</option>
+          <option value="done">DONE</option>
+          <option value="info">INFO</option>
+          <option value="idea">IDEA</option>
+          <option value="todo" selected>TODO</option>
+        </select>
+        <input type="text" name="text" class="entryText" placeholder="Type in your notes…">
+      </div>
+      <button>Submit</button>
+    </form>
 
-  <form id="newEntry">
-    <fieldset class="fields">
-      <select name="type" class="entryType">
-        <option value="todo">Todo</option>
-        <option value="info">Info</option>
-        <option value="block">Block</option>
-      </select>
-      <input type="text" name="text" class="entryText" placeholder="say what?">
-    </fieldset>
-    <button>Submit</button>
-  </form>
+    <div id="past"><table></table></div>
+  </section>
 
-  <div id="past">
-    <table>
-      
-    </table>
+  <div class="dropdown" id="dropdown-secondary">
+    <ul>
+      <li><a href="" id="reset">Clear lists</a></li>
+      <li class="sep"></li>
+      <li><a href="https://github.com/heyimjuani/minuta/issues/new" target="_blank">Bugs/feedback?</a></li>
+      <li><a href="http://github.com/heyimjuani/minuta" target="_blank">View source on Github</a></li>
+    </ul>
   </div>
 
+  <div class="dropdown" id="dropdown-primary">
+    <ul>
+      <li><a href="" id="clear">Clear tasks</a></li>
+      <!--li><a href="" id="remove">Delete project</a></li-->
+    </ul>
+  </div>
+
+  <div class="toast success">You should be getting an email soon!</div>
+  <div class="toast error">Make sure you have notes to export.</div>
 </body>
 </html>

@@ -1,0 +1,133 @@
+#tasks
+  flex: 1 1 auto
+
+  header
+    padding-left: 20px
+    position: fixed
+    top: 14px
+    left: 320px
+    right: 20px
+    background: #fff
+    z-index: 10
+    box-shadow: 20px 0 #fff, 0 -14px #fff
+  input
+    border: none
+    background: none
+    flex: 1 0 auto
+    padding: 17px 0 18px
+    &:disabled
+      color: $copy
+      opacity: .75
+  select
+    border: none
+    background: none
+    -webkit-appearance: none
+    position: relative
+    padding: 17px 20px 18px 0
+    margin-right: 10px
+    &:disabled
+      color: $copy
+      opacity: .75
+  input:focus, select:focus
+    // box-shadow: 0px 2px $copy, inset 0px -1px $copy
+    box-shadow: 0px 1px #B8B8BB, inset 0px -1px #B8B8BB
+    outline: none
+    border-radius: 0
+  form
+    position: relative
+    @include display-flex
+    @include flex-props(row wrap, flex-start, flex-start, flex-start)
+    &#newEntry
+      margin-left: 20px
+      display: block
+    &:before, &:after
+      content: ""
+      position: absolute
+      top: 20px
+      left: 0
+      width: 0
+      left: 85px
+      border: 3px solid transparent
+      border-bottom: 3px solid $copy
+    &:after
+      border-bottom: 3px solid transparent
+      border-top: 3px solid $copy
+      margin-top: 12px
+
+#done
+  margin: 0
+  padding: 0
+  li
+    list-style: none
+    position: relative
+    margin-left: 20px
+    padding: 0 0 1px
+    border-top: 1px solid transparent
+    &:not(:first-child)
+      border-top: 1px solid $border
+    &:last-child
+      border-bottom: 1px solid $border
+    .actions
+      position: absolute
+      top: 16px
+      right: 0
+      opacity: 0
+      visibility: hidden
+      transition: opacity ease-in-out .15s, visibility ease-in-out .15s
+      i
+        font-style: normal
+        font-size: .73em
+        text-transform: uppercase
+        font-weight: 600
+        opacity: .5
+        letter-spacing: .6px
+        margin-left: 10px
+        cursor: pointer
+        transition: opacity ease-in-out .15s
+        &:hover
+          opacity: 1
+    &:hover:not(.editing)
+      input
+        margin-right: 100px
+      .actions
+        opacity: 1
+        visibility: visible
+        background: #fff
+        box-shadow: 0px 0px 5px #fff
+    &:not(.editing)
+      form:before, form:after
+        display: none
+    &.editing
+      background: $editing
+      margin-left: 0
+      margin-right: -20px
+      padding-left: 20px
+      padding-right: 20px
+      border-bottom: 1px solid #F1E7D8
+      border-top: 1px solid #F1E7D8
+      + li
+        border-top: none
+      .actions
+        opacity: 1
+        visibility: visible
+        top: 16px
+        right: 20px
+        background: $editing
+        box-shadow: 0px 0px 5px $editing
+        .taskEdit
+          display: none
+      input
+        margin-right: 60px
+      input:focus, select:focus
+        box-shadow: 0px 2px rgba(175, 146, 103,.5)
+
+#newEntry
+  margin-bottom: 14px
+  button
+    display: none
+  .fields
+    border: none
+    margin: 0
+    border-bottom: 1px solid $border
+    @include display-flex
+    @include flex-props(row wrap, flex-start, flex-start, flex-start)

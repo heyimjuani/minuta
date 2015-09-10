@@ -1,0 +1,64 @@
+*
+  box-sizing: border-box
+  -moz-box-sizing: border-box
+
+html, body
+  height: 100%
+
+body
+  font-family: "Source Sans Pro", sans-serif
+  font-size: 18px
+  line-height: 26px
+  -webkit-font-smoothing: antialiased
+  color: #5b5b5f
+  @include display-flex
+  @include flex-props(row wrap, flex-start, flex-start, flex-start)
+  padding: 72px 20px 14px 320px
+
+header
+  border-bottom: 1px solid $border
+  padding: 16px 0
+  @include display-flex
+  @include flex-props(row wrap, space-between, flex-start, flex-start)
+
+  h1, h2
+    font-size: 1.3em
+    margin: 0
+    padding: 0
+    a
+      color: $copy
+      text-decoration: none
+
+.btn-text
+  color: $copy
+  text-decoration: none
+  opacity: .5
+  transition: opacity ease-in-out .15s
+  &:hover
+    opacity: 1
+    text-decoration: underline
+
+body.newUser
+  #sidebar, #tasks
+    display: none
+
+body.existingUser
+  #blankState
+    display: none
+
+#past
+  display: none
+
+.toast
+  position: fixed
+  top: 0
+  left: 50%
+  transform: translateX(-50%)
+  background: rgba(0,0,0,.8)
+  color: #fff
+  border-radius: 0 0 2px 2px
+  font-size: .875em
+  text-align: center
+  padding: 7px 20px
+  z-index: 20
+  display: none

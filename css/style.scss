@@ -4,6 +4,10 @@
 @import "_fonts.scss";
 @import "_grid.scss";
 
-@import "_base.scss";
+@import "_base.sass";
+@import "_sidebar.sass";
+@import "_tasks.sass";
+@import "_dropdowns.sass";
+@import "_blankstate.sass";
 
 @import "_responsive.scss";
